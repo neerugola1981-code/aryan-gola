@@ -1,0 +1,6 @@
+{
+  "name": "Vision",
+  "description": "A premium, professional full-stack eCommerce platform with native-feeling mobile app support, AI-powered product recommendations, voice search, live chat, and a built-in interactive mobile simulator.",
+  "requestFramePermissions": ["camera", "microphone", "geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
