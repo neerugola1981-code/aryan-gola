@@ -1029,4 +1029,8 @@ async function start() {
   });
 }
 
-start();
+if (process.env.NETLIFY !== "true") {
+  start();
+}
+
+export { app };
