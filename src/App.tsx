@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { 
   ShoppingBag, Heart, User as UserIcon, Settings, Search, Mic, 
   Sparkles, Bell, LayoutGrid, Tablet, Laptop, RefreshCw, Star, 
-  Send, Mail, Lock, Smartphone, ShieldCheck, LogOut, Check, ArrowRight, X
+  Send, Mail, Lock, Smartphone, ShieldCheck, LogOut, Check, ArrowRight, X, Globe
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { Product, CartItem, Order, User, UserAddress } from "./types";
@@ -22,7 +22,7 @@ import LiveChat from "./components/LiveChat";
 
 export default function App() {
   // Application Modes
-  const [appMode, setAppMode] = useState<'dual' | 'emulator'>('dual');
+  const [appMode, setAppMode] = useState<'web' | 'split' | 'emulator'>('web');
   const [isSplash, setIsSplash] = useState(true);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
@@ -378,40 +378,50 @@ export default function App() {
         <div className="flex items-center gap-3">
           <span className="font-display font-extrabold text-base tracking-wide text-brand-400">VISION</span>
           <span className="text-neutral-500 font-bold hidden md:inline">|</span>
-          <p className="text-neutral-400 hidden md:inline font-medium">Experience real APK sideloading & full-stack API systems.</p>
+          <p className="text-neutral-400 hidden md:inline font-medium">Standard Node.js Full-Stack Web App. APK Emulator ready.</p>
         </div>
 
         <div className="flex items-center gap-2">
           {/* Layout switches */}
           <button
-            onClick={() => setAppMode('dual')}
+            onClick={() => setAppMode('web')}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-              appMode === 'dual' ? 'bg-brand-500 text-white' : 'hover:bg-neutral-800 text-neutral-400'
+              appMode === 'web' ? 'bg-indigo-600 text-white shadow-sm' : 'hover:bg-neutral-800 text-neutral-400'
             }`}
           >
-            <LayoutGrid size={14} />
-            <span className="hidden sm:inline">Desktop & APK Split</span>
+            <Globe size={13} />
+            <span className="hidden sm:inline">Web Storefront</span>
+          </button>
+
+          <button
+            onClick={() => setAppMode('split')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+              appMode === 'split' ? 'bg-indigo-600 text-white shadow-sm' : 'hover:bg-neutral-800 text-neutral-400'
+            }`}
+          >
+            <LayoutGrid size={13} />
+            <span className="hidden sm:inline">Web & APK Split</span>
           </button>
 
           <button
             onClick={() => setAppMode('emulator')}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-              appMode === 'emulator' ? 'bg-brand-500 text-white' : 'hover:bg-neutral-800 text-neutral-400'
+              appMode === 'emulator' ? 'bg-indigo-600 text-white shadow-sm' : 'hover:bg-neutral-800 text-neutral-400'
             }`}
           >
-            <Smartphone size={14} />
-            <span className="hidden sm:inline">Standalone APK Emulator</span>
+            <Smartphone size={13} />
+            <span className="hidden sm:inline">Mobile APK View</span>
           </button>
         </div>
       </div>
 
-      {/* DUAL MODE OR STANDALONE EMULATOR CONTAINER */}
+      {/* WEB, SPLIT, OR STANDALONE EMULATOR CONTAINER */}
       <div className="max-w-7xl mx-auto px-4 py-6">
-        <div className={`grid grid-cols-1 ${appMode === 'dual' ? 'lg:grid-cols-12' : 'max-w-md mx-auto'} gap-8`}>
+        <div className={`grid grid-cols-1 ${appMode !== 'emulator' ? 'lg:grid-cols-12' : 'max-w-md mx-auto'} gap-8`}>
           
           {/* LEFT: FULL-BLOWN PREMIUM DESKTOP STOREFRONT */}
-          {appMode === "dual" && (
-            <div className="lg:col-span-8 flex flex-col gap-6">
+          {appMode !== 'emulator' && (
+            <div className={`${appMode === 'web' ? 'lg:col-span-12' : 'lg:col-span-8'} flex flex-col gap-6`}>
               
               {/* DESKTOP HEADER NAVBAR */}
               <div className="bg-white rounded-3xl border border-slate-200 p-4 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -852,85 +862,86 @@ export default function App() {
 
                 </div>
               )}
-                </div> {/* Closing flex-1 min-w-0 w-full space-y-6 */}
-              </div> {/* Closing flex flex-col md:flex-row gap-6 items-start */}
+                </div>
+              </div>
             </div>
           )}
-
-          {/* RIGHT COLUMN / MOBILE PHONE EMULATOR FOR APK SIMULATION */}
-          <div className={`${appMode === 'dual' ? 'lg:col-span-4' : 'col-span-1'} w-full`}>
-            <SimulatorFrame 
-              activeMobileTab={activeTab}
-              setActiveMobileTab={setActiveTab}
-              cartCount={cart.reduce((sum, i) => sum + i.quantity, 0)}
-            >
-              {/* This renders the exact shop layout of mobile phones */}
-              <div className="p-4 space-y-4">
-                {/* Mobile Header */}
-                <div className="flex justify-between items-center bg-white p-3 rounded-2xl border border-neutral-100 shadow-sm">
-                  <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 bg-black text-white rounded-lg flex items-center justify-center font-bold font-display text-sm">V</div>
-                    <span className="text-xs font-extrabold tracking-tight">Vision Mobile</span>
+                  {/* RIGHT COLUMN / MOBILE PHONE EMULATOR FOR APK SIMULATION */}
+          {appMode !== 'web' && (
+            <div className={`${appMode === 'split' ? 'lg:col-span-4' : 'col-span-1'} w-full`}>
+              <SimulatorFrame 
+                activeMobileTab={activeTab}
+                setActiveMobileTab={setActiveTab}
+                cartCount={cart.reduce((sum, i) => sum + i.quantity, 0)}
+              >
+                {/* This renders the exact shop layout of mobile phones */}
+                <div className="p-4 space-y-4">
+                  {/* Mobile Header */}
+                  <div className="flex justify-between items-center bg-white p-3 rounded-2xl border border-neutral-100 shadow-sm">
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 bg-black text-white rounded-lg flex items-center justify-center font-bold font-display text-sm">V</div>
+                      <span className="text-xs font-extrabold tracking-tight">Vision Mobile</span>
+                    </div>
+                    
+                    <button 
+                      onClick={() => setIsCartOpen(true)}
+                      className="p-1.5 hover:bg-neutral-50 rounded-xl relative"
+                    >
+                      <ShoppingBag size={16} />
+                      {cart.length > 0 && (
+                        <span className="absolute top-0 right-0 bg-brand-500 text-white text-[8px] font-black w-3.5 h-3.5 rounded-full flex items-center justify-center">
+                          {cart.length}
+                        </span>
+                      )}
+                    </button>
                   </div>
-                  
-                  <button 
-                    onClick={() => setIsCartOpen(true)}
-                    className="p-1.5 hover:bg-neutral-50 rounded-xl relative"
-                  >
-                    <ShoppingBag size={16} />
-                    {cart.length > 0 && (
-                      <span className="absolute top-0 right-0 bg-brand-500 text-white text-[8px] font-black w-3.5 h-3.5 rounded-full flex items-center justify-center">
-                        {cart.length}
-                      </span>
-                    )}
-                  </button>
-                </div>
 
-                {/* Simulated Carousel Mini */}
-                <div className="aspect-[2/1] bg-neutral-900 rounded-2xl overflow-hidden relative text-white p-3 flex flex-col justify-end">
-                  <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&q=80&w=400" alt="" className="absolute inset-0 w-full h-full object-cover filter brightness-50" />
-                  <span className="text-[8px] font-bold bg-brand-500 px-1.5 py-0.2 rounded-full inline-block mb-1 self-start">NEW PHONE</span>
-                  <h4 className="text-xs font-bold leading-none">Vision Pro Max</h4>
-                  <p className="text-[9px] text-neutral-300 mt-0.5">Titanium power inside your hands.</p>
-                </div>
-
-                {/* Mobile Products layout */}
-                <div className="space-y-2">
-                  <h5 className="text-[10px] font-black uppercase text-neutral-400 tracking-wider">Mobile Hot-Picks</h5>
-                  <div className="grid grid-cols-2 gap-3">
-                    {products.slice(0, 4).map(p => (
-                      <div 
-                        key={p.id}
-                        onClick={() => setSelectedProduct(p)}
-                        className="bg-white p-2 rounded-xl border border-neutral-150 cursor-pointer flex flex-col justify-between"
-                      >
-                        <div className="aspect-square rounded-lg bg-neutral-50 overflow-hidden mb-1">
-                          <img src={p.images[0]} alt="" className="w-full h-full object-cover" />
-                        </div>
-                        <h6 className="text-[10px] font-bold text-neutral-800 line-clamp-1">{p.name}</h6>
-                        <div className="flex justify-between items-baseline mt-1">
-                          <span className="text-[11px] font-mono font-bold text-neutral-950">₹{p.price}</span>
-                          <button 
-                            onClick={(e) => { e.stopPropagation(); handleAddToCart(p); }}
-                            className="p-1 bg-brand-500 text-white rounded"
-                          >
-                            +
-                          </button>
-                        </div>
-                      </div>
-                    ))}
+                  {/* Simulated Carousel Mini */}
+                  <div className="aspect-[2/1] bg-neutral-900 rounded-2xl overflow-hidden relative text-white p-3 flex flex-col justify-end">
+                    <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&q=80&w=400" alt="" className="absolute inset-0 w-full h-full object-cover filter brightness-50" />
+                    <span className="text-[8px] font-bold bg-brand-500 px-1.5 py-0.2 rounded-full inline-block mb-1 self-start">NEW PHONE</span>
+                    <h4 className="text-xs font-bold leading-none">Vision Pro Max</h4>
+                    <p className="text-[9px] text-neutral-300 mt-0.5">Titanium power inside your hands.</p>
                   </div>
-                </div>
 
-                {/* Mobile Quick suggestion widget */}
-                <div className="p-3 bg-brand-50/50 border border-brand-100 rounded-2xl text-[10px]">
-                  <p className="font-bold text-brand-700">✓ Native Android Support (APK Ready)</p>
-                  <p className="text-neutral-500 mt-0.5">Tap "Install APK" at the top panel of your virtual emulator frame to install sideloaded packages!</p>
-                </div>
+                  {/* Mobile Products layout */}
+                  <div className="space-y-2">
+                    <h5 className="text-[10px] font-black uppercase text-neutral-400 tracking-wider">Mobile Hot-Picks</h5>
+                    <div className="grid grid-cols-2 gap-3">
+                      {products.slice(0, 4).map(p => (
+                        <div 
+                          key={p.id}
+                          onClick={() => setSelectedProduct(p)}
+                          className="bg-white p-2 rounded-xl border border-neutral-150 cursor-pointer flex flex-col justify-between"
+                        >
+                          <div className="aspect-square rounded-lg bg-neutral-50 overflow-hidden mb-1">
+                            <img src={p.images[0]} alt="" className="w-full h-full object-cover" />
+                          </div>
+                          <h6 className="text-[10px] font-bold text-neutral-800 line-clamp-1">{p.name}</h6>
+                          <div className="flex justify-between items-baseline mt-1">
+                            <span className="text-[11px] font-mono font-bold text-neutral-950">₹{p.price}</span>
+                            <button 
+                              onClick={(e) => { e.stopPropagation(); handleAddToCart(p); }}
+                              className="p-1 bg-brand-500 text-white rounded"
+                            >
+                              +
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
 
-              </div>
-            </SimulatorFrame>
-          </div>
+                  {/* Mobile Quick suggestion widget */}
+                  <div className="p-3 bg-brand-50/50 border border-brand-100 rounded-2xl text-[10px]">
+                    <p className="font-bold text-brand-700">✓ Native Android Support (APK Ready)</p>
+                    <p className="text-neutral-500 mt-0.5">Tap "Install APK" at the top panel of your virtual emulator frame to install sideloaded packages!</p>
+                  </div>
+
+                </div>
+              </SimulatorFrame>
+            </div>
+          )}
 
         </div>
       </div>
